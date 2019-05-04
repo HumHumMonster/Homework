@@ -1,5 +1,3 @@
-//二叉搜索树的单分支节点个数.cpp
-
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
@@ -19,7 +17,7 @@ void Insert(BTreeNode* &BST , const ElemType &item)
 {
     if (BST == NULL)
     {
-        BTreeNode*p = new BTreeNode ;
+        BTreeNode* p = new BTreeNode ;
         p -> data = item ;
         p -> left = p -> right = NULL ;
         BST = p ;
@@ -53,6 +51,19 @@ int Num_OneChildNode(BTreeNode* BST)
         return Num_OneChildNode(BST -> left) + Num_OneChildNode(BST -> right) ;
 }
 
+int BiggestData(BTreeNode* BST)
+{
+    if (BST == NULL)
+    {
+        printf ("没有可查找元素") ;
+        return 0 ;
+    }
+    if (BST -> right == NULL)
+        return BST -> data ;
+    else
+        return BiggestData(BST -> right) ;
+}
+
 BTreeNode* root ;
 
 int main ()
@@ -66,5 +77,6 @@ int main ()
     Insert(root , 2) ;
     Insert(root , 8) ;
     Insert(root , 7) ;
+    printf ("最大值为 : %d\n" , BiggestData(root)) ;
     printf ("%d" , Num_OneChildNode(root)) ;
 }
