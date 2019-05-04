@@ -261,11 +261,12 @@ bool DeleteList(LNode* &HL , ElemType item , int pos)
     return true ;
 }
 
-LNode* reverseList1(LNode* head) {
-        if (head == NULL)
-            return head;
+LNode* ReverseList(LNode* HL)
+{
+        if (HL == NULL)
+            return HL ;
         LNode* dummy = new LNode(-1);
-        dummy->next = head;
+        dummy -> next = HL;
         LNode* prev = dummy->next;
         LNode* pCur = prev->next;
         while (pCur != NULL) {
@@ -274,8 +275,8 @@ LNode* reverseList1(LNode* head) {
             dummy->next = pCur;
             pCur = prev->next;
         }
-        return dummy->next;
-    }
+        return dummy->next ;
+}
 
 LNode* L ;
 
@@ -289,7 +290,7 @@ int main ()
     InsertList (L , 5 , -1) ;
     InsertList (L , 6 , -1) ;
     TraverseList(L) ;
-    L = reverseList1(L) ;
+    L = ReverseList(L) ;
     TraverseList(L) ;
 //    DeleteList (L , 1 , -1) ;
 //    TraverseList(L) ;
