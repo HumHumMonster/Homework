@@ -120,7 +120,7 @@ int main ()
     L.insert(5) ;
     L.insert(6) ;
 
-    printf ("%d\n" , L.get(3) -> data) ;
+    printf ("%d\n" , L.get(3)->data ) ;
 
     L.output() ;
     L.ReverseList() ;
