@@ -89,23 +89,42 @@ struct LinkList
         length-- ;
     }
 
+//    void ReverseList()
+//    {
+//        if (header.next == NULL)
+//            return ;
+//        Node* dummy = new Node() ;
+//        dummy -> next = header.next ;
+//        Node* pre = dummy -> next ;
+//        Node* lat = pre -> next ;
+//        while (lat != NULL)
+//        {
+//            pre -> next = lat -> next ;
+//            lat -> next = dummy -> next ;
+//            dummy -> next = lat ;
+//            lat = pre -> next ;
+//        }
+//        header.next = dummy -> next ;
+//    }
+
+//递归写法
+    Node* Reverse(Node* p)
+    {
+        if (p -> next == NULL)
+        {
+            header.next = p ;
+            return p ;
+        }
+        return Reverse(p -> next) -> next = p ;
+    }
+
     void ReverseList()
     {
-        if (header.next == NULL)
-            return ;
-        Node* dummy = new Node() ;
-        dummy -> next = header.next ;
-        Node* pre = dummy -> next ;
-        Node* lat = pre -> next ;
-        while (lat != NULL)
-        {
-            pre -> next = lat -> next ;
-            lat -> next = dummy -> next ;
-            dummy -> next = lat ;
-            lat = pre -> next ;
-        }
-        header.next = dummy -> next ;
+        Node* p = header.next ;
+        Reverse(p) ;
+        p -> next = NULL ;
     }
+
 };
 
 
