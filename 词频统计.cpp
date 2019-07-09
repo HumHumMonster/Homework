@@ -1,7 +1,6 @@
 /*
 大二小学期写的一个数据结构作业，词频统计
 给100w个单词放入字典树
-
 */
 
 
@@ -23,7 +22,7 @@ struct Node     //字典树节点
     bool is_word ;          //是否是一个单词的结尾
     int cnt ;               //如果是单词的结尾，统计单词的数量
 };
-
+            n
 Node* root ;    //字典树的根节点
 
 Node* New_node(char ch , int deep)      //申请一个新的字典树节点，字符为ch，深度为deep
@@ -48,7 +47,8 @@ void Insert(Node* p , char str[] , int l , int r , int cnt)       //插入一个
             id = 26 ;
         if (str[i] == '\'')
             id = 27 ;
-
+        if (str[i] <= 'Z' && str[i] >= 'A')
+            str[i] += 32 ;
         p -> next[id] = New_node(str[i] , p -> deep + 1) ;      //申请一个新节点，字符为str[i] , 深度为deep + 1
         p = p -> next[id] ;         //跳到后继节点，继续准备插入
     }
@@ -259,7 +259,7 @@ int main ()
             if (fpw == NULL)
                 printf ("导出失败!文件地址有误！\n") ;
             Show() ;
-            printf ("导出成功！\n") ;
+            printf ("导出成功！导出单词数量为%d\n" , word_cnt) ;
         }
         else
             printf ("操作符号有误!\n") ;
