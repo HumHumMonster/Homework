@@ -38,7 +38,7 @@ Node* New_node(char ch , int deep)      //申请一个新的字典树节点，�
     return p ;
 }
 
-void Insert(Node* p , char str[] , int l , int r)       //插入一个单词，从p节点后面 继续插入 字符串str的l到r - 1
+void Insert(Node* p , char str[] , int l , int r , int cnt)       //插入一个单词，从p节点后面 继续插入 字符串str的l到r - 1
 {
     for (int i = l ; i < r ; ++i)
     {
@@ -53,11 +53,12 @@ void Insert(Node* p , char str[] , int l , int r)       //插入一个单词，�
         p = p -> next[id] ;         //跳到后继节点，继续准备插入
     }
     p -> is_word = true ;           //标记为一个单词
-    p -> cnt = 1 ;                  //单词个数为 1
+    (p -> cnt) = cnt ;                  //单词个数为 1
     return ;
 }
 
-void Solve(char str[] , int l , int r)              //处理字符串str
+
+void Solve(char str[] , int l , int r , int cnt)              //处理字符串str
 {
     Node* p = root ;                //从根节点开始向下查找
     for (int i = l ; i < r ; ++i)
@@ -74,17 +75,45 @@ void Solve(char str[] , int l , int r)              //处理字符串str
         //如果下一个对应的节点为空，则说明现在查找的单词不在树中
         if (p -> next[id] == NULL)
         {
-            Insert(p , str , i , r) ;       //插入该单词
+            Insert(p , str , i , r , cnt) ;       //插入该单词
             return ;                        //插入后返回
         }
         p = p -> next[id] ;
     }
     //查找到该单词
-    ++(p -> cnt) ;                  //单词数加一
+    (p -> cnt) += cnt ;                  //单词数加一
     if (!(p -> is_word))            //如果该还不是单词，则设置为单词
         p -> is_word = true ;
 
 }
+
+void Divide_word(char str[])
+{
+    int l , r = -1 ;
+    int len = strlen(str) ;
+    //把小段分割出单词，分别处理
+    while (1)
+    {
+        //l代表从上一次的r之后第一个为字母的位置
+        for (l = r + 1 ; l < len ; ++l)
+        {
+            if ((str[l] <= 'z' && str[l] >= 'a') || (str[l] <= 'Z' && str[l] >= 'A'))
+                break ;
+        }
+        if (l == len)
+            break ;
+        //r代表从这一次l之后第一个不属于单词该有的字符的位置
+        for (r = l + 1 ; r < len ; ++r)
+        {
+            if (!((str[r] <= 'z' && str[r] >= 'a') || (str[r] <= 'Z' && str[r] >= 'A') || str[r] == '-' || str[r] == '\''))
+                break ;
+        }
+        Solve(str , l , r , 1) ;
+        if (r == len)
+            break ;
+    }
+}
+
 
 char word[100] ;                    //存放要输出的单词
 
@@ -97,7 +126,7 @@ void DFS(Node* p)                   //从根节点开始向下DFS
         {
             fprintf (fpw , "%c" , word[i]) ;
         }
-        fprintf (fpw , "   次数为%d\n" , p -> cnt) ;
+        fprintf (fpw , "   次数为： %d\n" , p -> cnt) ;
         word_cnt += p -> cnt ;
     }
     //向26个子节点再深度优先搜索
@@ -116,42 +145,127 @@ void Show()             //展示函数
     DFS(root) ;
 }
 
+void Search(char str[] , int l , int r)       //查找一个单词
+{
+    Node* p = root ;
+    for (int i = l ; i < r ; ++i)
+    {
+        //把字符转化为0到27的整数
+        int id = str[i] - 'a' ;
+        if (str[i] <= 'Z' && str[i] >= 'A')
+            id += 32 ;
+        if (str[i] == '-')
+            id = 26 ;
+        if (str[i] == '\'')
+            id = 27 ;
+        //如果无查找的节点，说明没有这个单词，次数为0
+        if (!(id >= 0 && id <= 27))
+        {
+            for (int j = l ; j < r ; ++j) printf ("%c" , str[j]) ;
+            printf ("   次数为： 0\n") ;
+            return ;
+        }
+        if (p -> next[id] == NULL)
+        {
+            for (int j = l ; j < r ; ++j) printf ("%c" , str[j]) ;
+            printf ("   次数为： 0\n") ;
+            return ;
+        }
+        p = p -> next[id] ;         //跳到后继节点，继续查找
+    }
+    for (int i = l ; i < r ; ++i) printf ("%c" , str[i]) ;
+    printf ("   次数为： ") ;
+    printf ("%d\n" , p -> cnt) ;
+    return ;
+}
+
+
 char str[100] ;
+
+char op[30] ;
+
+char address[100] ;
+
+
 
 int main ()
 {
-    //给文件指针赋值
-    fpr = fopen("C:\\Users\\14714\\Desktop\\homework\\Harry Potter and the Sorcerer's Stone.txt" , "r") ;
-    fpw = fopen("C:\\Users\\14714\\Desktop\\homework\\out.txt" , "w") ;
-    //给根节点赋值，根节点深度为0
     root = New_node('@' , 0) ;
-    while (fscanf (fpr , "%s" , str) != EOF)        //读入一个小段
+    while (1)
     {
-        int l , r = -1 ;
-        int len = strlen(str) ;
-        //把小段分割出单词，分别处理
-        while (1)
+        printf ("请输入操作符:\nQ.查询一个单词\nI.插入一个短文\nR.导入一个小说或者一份记录\nW.导出记录\n") ;
+        scanf ("%s" , op) ;
+        if (op[0] == 'Q')
         {
-            //l代表从上一次的r之后第一个为字母的位置
-            for (l = r + 1 ; l < len ; ++l)
-            {
-                if ((str[l] <= 'z' && str[l] >= 'a') || (str[l] <= 'Z' && str[l] >= 'A'))
-                    break ;
-            }
-            if (l == len)
-                break ;
-            //r代表从这一次l之后第一个不属于单词该有的字符的位置
-            for (r = l + 1 ; r < len ; ++r)
-            {
-                if (!((str[r] <= 'z' && str[r] >= 'a') || (str[r] <= 'Z' && str[r] >= 'A') || str[r] == '-' || str[r] == '\''))
-                    break ;
-            }
-            Solve(str , l , r) ;
-            if (r == len)
-                break ;
+            printf ("请输入需要查找的单词：\n") ;
+            scanf ("%s" , str) ;
+            Search(str , 0 , strlen(str)) ;
         }
+        else if (op[0] == 'I')
+        {
+            printf ("请输入需要插入的短文(以一个单独的@为结束)：\n") ;
+            while(scanf ("%s" , str))
+            {
+                if (str[0] == '@')
+                    break ;
+                Divide_word(str) ;
+            }
+            printf ("插入完成！\n") ;
+        }
+        else if (op[0] == 'R')
+        {
+            printf ("请输入导入方式:\nN.导入一本小说\nR.导入一份记录\n") ;
+            scanf ("%s" , op) ;
+            printf ("请输入导入文件的位置:\n") ;
+            getchar() ;
+            gets(address) ;
+            fpr = NULL ;
+            fpr = fopen(address , "r") ;
+            //C:\Users\14714\Desktop\homework\Harry Potter and the Sorcerer's Stone.txt
+            //C:\Users\14714\Desktop\homework\out.txt
+            if (fpr == NULL)
+            {
+                printf ("导入失败!文件地址有误！\n") ;
+                continue ;
+            }
+            if (op[0] == 'N')
+            {
+                while (fscanf (fpr , "%s" , str) != EOF)
+                    Divide_word(str) ;
+                printf ("%s  导入成功！\n" , address) ;
+            }
+            else if (op[0] == 'R')
+            {
+                while (fscanf (fpr , "%s" , str) != EOF)
+                {
+                    fscanf (fpr , "%s" , op) ;
+                    int cnt ;
+                    fscanf (fpr , "%d" , &cnt) ;
+                    //printf ("%s  %s  %d\n" , str , op , cnt) ;
+                    Solve(str , 0 , strlen(str) , cnt) ;
+                }
+                printf ("%s  导入成功！\n" , address) ;
+            }
+            else
+                printf ("操作符号有误!\n") ;
+        }
+        else if (op[0] == 'W')
+        {
+            printf ("请输入导出文件的位置:\n") ;
+            getchar() ;
+            gets(address) ;
+            fpw = NULL ;
+            fpw = fopen(address , "w") ;                //C:\Users\14714\Desktop\homework\out.txt
+            if (fpw == NULL)
+                printf ("导出失败!文件地址有误！\n") ;
+            Show() ;
+            printf ("导出成功！\n") ;
+        }
+        else
+            printf ("操作符号有误!\n") ;
+        printf ("\n") ;
     }
     Show() ;
-    fprintf (fpr , "总单词数为 ：%d\n" , word_cnt) ;
-    printf ("%d" , word_cnt) ;
+    fprintf (fpr , "frequency of occurrence:%d\n" , word_cnt) ;
+    printf ("%d\n" , word_cnt) ;
 }
