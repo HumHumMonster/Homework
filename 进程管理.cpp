@@ -210,8 +210,6 @@ void Run()
         wait(printer) ;
     --Running.run_time ;
     --Running.sjp ;
-    if (Running.need_printer)
-        signal(printer) ;
     if (Running.run_time == 0)
     {
         printf("进程 %d 运行结束\n" , Running.PID) ;
@@ -219,6 +217,8 @@ void Run()
     }
     else if (Running.sjp == 0)
     {
+        if (Running.need_printer)
+            signal(printer) ;
         if (Running.yxj == 1)
         {
             Running.yxj = 2 ;
@@ -316,29 +316,24 @@ A
 1
 4
 Y
-
 A
 2
 2
 4
 Y
-
 A
 3
 3
 2
 Y
-
 A
 4
 3
 5
 Y
-
 A
 5
 4
 6
 Y
-
 */
